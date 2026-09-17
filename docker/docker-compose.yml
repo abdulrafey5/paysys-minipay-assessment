@@ -19,5 +19,23 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build:
+      context: ../app/api
+      dockerfile: Dockerfile
+    container_name: minipay-api
+    restart: unless-stopped
+    environment:
+      MINIPAY_DB_HOST: db
+      MINIPAY_DB_PORT: "5432"
+      MINIPAY_DB_NAME: minipay
+      MINIPAY_DB_USER: minipay
+      MINIPAY_DB_PASSWORD: minipay_local_dev_only
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   minipay_pgdata:
