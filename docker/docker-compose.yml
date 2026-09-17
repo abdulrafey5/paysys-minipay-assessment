@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: minipay-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: minipay
+      POSTGRES_USER: minipay
+      POSTGRES_PASSWORD: minipay_local_dev_only
+    ports:
+      - "5432:5432"
+    volumes:
+      - minipay_pgdata:/var/lib/postgresql/data
+      - ../app/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U minipay -d minipay"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  minipay_pgdata:
