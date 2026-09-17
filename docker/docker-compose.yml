@@ -37,5 +37,16 @@ services:
       db:
         condition: service_healthy
 
+  ui:
+    build:
+      context: ../app/ui
+      dockerfile: Dockerfile
+    container_name: minipay-ui
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - api
+
 volumes:
   minipay_pgdata:
