@@ -28,14 +28,3 @@ spec:
           resources:
             requests: { cpu: "10m", memory: "16Mi" }
             limits: { cpu: "100m", memory: "64Mi" }
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: minipay-ui
-  namespace: minipay
-spec:
-  selector: { app: minipay-ui }
-  ports:
-    - port: 80
-      targetPort: 80
