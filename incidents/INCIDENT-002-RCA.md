@@ -7,25 +7,31 @@
 A deployment using `starter/kubernetes/broken-api.yaml` shows pods reaching a
 Running state, but the application is not reachable through the Service.
 
+
 ## Reproduction steps
-1. `kubectl apply -f starter/kubernetes/broken-api.yaml` (image tag substituted
-   with a real built image to isolate this from a separate image-availability issue)
-2. `kubectl get pods` — pod(s) reach `Running` but **not `Ready`**
-   (`READY 0/1`), because the readiness probe targets port 8081 while the
-   container only listens on 8080 (see finding #2 in
-   `investigation/kubernetes-findings.md`)
-3. `kubectl describe svc minipay-api` — `Endpoints: <none>`, because the
-   Service selector (`app: minipay-backend`) does not match the pod label
-   (`app: minipay-api`) (finding #4)
-4. `curl` to the Service — connection fails / times out, regardless of pod
-   health, because there are no valid endpoints to route to
+1. Retrieved the actual starter file from the assessment source repo and applied
+   it (image placeholder substituted with the real built tag `minipay-api:v1`)
+   against the working `minipay` namespace.
+2. Because the broken manifest reuses the same Deployment/Service names as the
+   working deployment, `kubectl apply` performed a **rolling update** rather
+   than an isolated failure:
+   - `kubectl get pods` showed a new pod enter `CrashLoopBackOff`
+   - `kubectl describe svc minipay-api` showed **`Endpoints:` empty** —
+     zero backends, confirming the selector mismatch (`app: minipay-backend`
+     vs pod label `app: minipay-api`) independently of pod health
+3. Regardless of which individual pod was healthy at any moment, **the Service
+   itself had no valid endpoints for the entire test window** — meaning
+   end-user traffic would have failed 100% of the time even if some pods were
+   internally fine, which matches the incident report ("pods appear to start,
+   but users cannot successfully access the application").
+4. Restored working state by re-applying `k8s/05-api.yaml` + `k8s/05b-api-service.yaml`.
 
 ## Evidence gathered
-- `kubectl get pods -o wide` — pod IPs assigned, container running, but not Ready
-- `kubectl describe pod <pod>` — readiness probe failures logged
-  (`Readiness probe failed: HTTP probe failed with statuscode: 000` — connection
-  refused on 8081)
-- `kubectl describe svc minipay-api` — `Endpoints: <none>`
+- `kubectl get pods` — new ReplicaSet's pod in `CrashLoopBackOff`
+- `kubectl describe svc minipay-api` — `Endpoints:` empty (no addresses listed),
+  `Events:` empty — Kubernetes never had a valid pod to route to under the
+  broken selector, regardless of individual pod health/readiness state
+- [paste `--previous` log output here if captured]
 
 ## Hypotheses considered
 1. Image pull failure — ruled out once a real image tag was substituted; the
