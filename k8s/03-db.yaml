@@ -40,6 +40,9 @@ spec:
             - name: data
               mountPath: /var/lib/postgresql/data
               subPath: pgdata   # avoid postgres complaining about lost+found in a fresh PVC root
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits: { cpu: "500m", memory: "512Mi" }
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "minipay", "-d", "minipay"]

@@ -92,6 +92,7 @@ def create_customer(payload: CustomerCreate):
                 (payload.customer_ref, payload.name),
             )
             row = cur.fetchone()
+        logger.info("customer created ref=%s", payload.customer_ref)
         return dict(row)
     except psycopg2.errors.UniqueViolation:
         raise HTTPException(status_code=409, detail="customer_ref already exists")
@@ -154,6 +155,7 @@ def create_payment(payload: PaymentCreate):
             (new_status, failure_code, tx_id),
         )
         tx = dict(cur.fetchone())
+        logger.info("payment %s id=%s ref=%s amount=%s", "succeeded" if success else "FAILED", tx_id, payload.transaction_ref, payload.amount)
 
         cur.execute(
             "INSERT INTO callbacks(transaction_id, attempt_no, http_status, callback_status, attempted_at) "
