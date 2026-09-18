@@ -19,9 +19,10 @@ SCORING.md.
 - `investigation/` — INCIDENT-001 RCA, Kubernetes starter-manifest defect findings
 - `incidents/` — INCIDENT-002, INCIDENT-003 RCAs
 - `tests/api/` — pytest suite against the running API
-- `tests/ui/` — GUI automation
+- `tests/ui/` — not completed (see AI_USAGE.md for why)
 - `evidence/` — supporting screenshots/logs where reproducible commands aren't enough
 - `AI_USAGE.md` — AI tool usage, prompts, validation, corrections
+Note: kubernetes/ folder is named k8s/ for clarity (structure improvement per INSTRUCTIONS.md).
 
 ## Quick start
 See `SETUP.md` for full reproduction steps. Short version:
