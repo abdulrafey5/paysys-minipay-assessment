@@ -56,3 +56,8 @@ def test_duplicate_customer_ref_shows_conflict(page: Page, ref_suffix):
     page.fill("#custName", "Duplicate Attempt")
     page.get_by_role("button", name="Create Customer").click()
     expect(page.locator("#custResult")).to_contain_text("HTTP 409", timeout=5000)
+
+
+def test_capture_console_screenshot(page: Page):
+    page.goto(UI_URL)
+    page.screenshot(path="../../evidence/minipay-console.png", full_page=True)
