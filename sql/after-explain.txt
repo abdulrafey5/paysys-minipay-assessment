@@ -1,0 +1,11 @@
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using idx_transactions_transaction_ref on transactions  (cost=0.41..8.43 rows=1 width=75) (actual time=0.054..0.055 rows=2 loops=1)
+   Index Cond: ((transaction_ref)::text = 'TXN00054999'::text)
+   Buffers: shared hit=1 read=3
+ Planning:
+   Buffers: shared hit=102 read=1
+ Planning Time: 1.069 ms
+ Execution Time: 0.109 ms
+(7 rows)
+

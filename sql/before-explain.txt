@@ -1,0 +1,12 @@
+                                                QUERY PLAN                                                
+----------------------------------------------------------------------------------------------------------
+ Seq Scan on transactions  (cost=0.00..1364.50 rows=1 width=75) (actual time=3.786..3.787 rows=2 loops=1)
+   Filter: ((transaction_ref)::text = 'TXN00054999'::text)
+   Rows Removed by Filter: 55000
+   Buffers: shared hit=677
+ Planning:
+   Buffers: shared hit=81
+ Planning Time: 0.445 ms
+ Execution Time: 3.810 ms
+(8 rows)
+
