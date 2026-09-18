@@ -1,0 +1,40 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 -- /home/rafey/projects/paysys-minipay-assessment/python/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/rafey/projects/paysys-minipay-assessment/python
+collecting ... collected 7 items
+
+tests/test_diagnostics.py::test_stuck_processing_flagged PASSED          [ 14%]
+tests/test_diagnostics.py::test_processing_within_threshold_not_flagged PASSED [ 28%]
+tests/test_diagnostics.py::test_failed_transaction_reports_failure_code PASSED [ 42%]
+tests/test_diagnostics.py::test_success_without_successful_callback_flagged_as_anomaly PASSED [ 57%]
+tests/test_diagnostics.py::test_success_with_successful_callback_is_clean PASSED [ 71%]
+tests/test_diagnostics.py::test_multiple_callback_attempts_flagged PASSED [ 85%]
+tests/test_diagnostics.py::test_summarize_stuck_report_counts_correctly PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_diagnostics.py::test_failed_transaction_reports_failure_code
+  /home/rafey/projects/paysys-minipay-assessment/python/tests/test_diagnostics.py:25: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    tx = {"status": "FAILED", "failure_code": "UPSTREAM_ERROR", "created_at": datetime.utcnow()}
+
+tests/test_diagnostics.py::test_failed_transaction_reports_failure_code
+tests/test_diagnostics.py::test_success_without_successful_callback_flagged_as_anomaly
+tests/test_diagnostics.py::test_success_with_successful_callback_is_clean
+tests/test_diagnostics.py::test_multiple_callback_attempts_flagged
+  /home/rafey/projects/paysys-minipay-assessment/python/tests/../lib/diagnostics.py:9: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = now or datetime.utcnow()
+
+tests/test_diagnostics.py::test_success_without_successful_callback_flagged_as_anomaly
+  /home/rafey/projects/paysys-minipay-assessment/python/tests/test_diagnostics.py:31: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    tx = {"status": "SUCCESS", "created_at": datetime.utcnow()}
+
+tests/test_diagnostics.py::test_success_with_successful_callback_is_clean
+  /home/rafey/projects/paysys-minipay-assessment/python/tests/test_diagnostics.py:38: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    tx = {"status": "SUCCESS", "created_at": datetime.utcnow()}
+
+tests/test_diagnostics.py::test_multiple_callback_attempts_flagged
+  /home/rafey/projects/paysys-minipay-assessment/python/tests/test_diagnostics.py:45: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    tx = {"status": "SUCCESS", "created_at": datetime.utcnow()}
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 8 warnings in 0.01s =========================
