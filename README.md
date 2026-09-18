@@ -1,7 +1,7 @@
 # MiniPay — Paysys Labs Implementation & L2 Support Assessment
 
 Candidate: Abdul Rafey
-Position: Implementation & L2 Support Engineer
+Position: DevOps Engineer
 
 ## What this is
 A small payment-processing app (Postgres + FastAPI + static UI) deployed to
