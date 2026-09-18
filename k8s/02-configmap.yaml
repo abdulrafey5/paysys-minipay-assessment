@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minipay-config
+  namespace: minipay
+data:
+  POSTGRES_DB: minipay
+  POSTGRES_USER: minipay
+  MINIPAY_DB_HOST: minipay-db
+  MINIPAY_DB_PORT: "5432"
+  MINIPAY_DB_NAME: minipay
+  MINIPAY_DB_USER: minipay

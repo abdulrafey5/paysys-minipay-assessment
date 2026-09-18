@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minipay-db-pvc
+  namespace: minipay
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minipay-db
+  namespace: minipay
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate   # single PVC, avoid two postgres pods writing to it at once during rollout
+  selector:
+    matchLabels: { app: minipay-db }
+  template:
+    metadata:
+      labels: { app: minipay-db }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef: { name: minipay-config }
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: minipay-db-secret, key: POSTGRES_PASSWORD }
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata   # avoid postgres complaining about lost+found in a fresh PVC root
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "minipay", "-d", "minipay"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "minipay", "-d", "minipay"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: minipay-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minipay-db
+  namespace: minipay
+spec:
+  selector: { app: minipay-db }
+  ports:
+    - port: 5432
+      targetPort: 5432

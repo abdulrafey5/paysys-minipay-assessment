@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minipay-schema-load
+  namespace: minipay
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: schema-load
+          image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef: { name: minipay-config }
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef: { name: minipay-db-secret, key: POSTGRES_PASSWORD }
+          command: ["sh", "-c"]
+          args:
+            - |
+              until pg_isready -h "$MINIPAY_DB_HOST" -p "$MINIPAY_DB_PORT" -U "$MINIPAY_DB_USER"; do
+                echo "waiting for db..."; sleep 2;
+              done
+              # Idempotent: skip if schema already applied (customers table exists)
+              EXISTS=$(psql -h "$MINIPAY_DB_HOST" -U "$MINIPAY_DB_USER" -d "$MINIPAY_DB_NAME" -tAc \
+                "SELECT to_regclass('public.customers') IS NOT NULL;")
+              if [ "$EXISTS" = "t" ]; then
+                echo "schema already applied, skipping"
+              else
+                psql -h "$MINIPAY_DB_HOST" -U "$MINIPAY_DB_USER" -d "$MINIPAY_DB_NAME" -f /schema/schema.sql
+              fi
+          volumeMounts:
+            - name: schema
+              mountPath: /schema
+      volumes:
+        - name: schema
+          configMap:
+            name: minipay-schema

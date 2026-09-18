@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minipay-api
+  namespace: minipay
+spec:
+  type: LoadBalancer
+  selector: { app: minipay-api }
+  ports:
+    - port: 8080
+      targetPort: 8080
