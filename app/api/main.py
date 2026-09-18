@@ -176,4 +176,9 @@ def get_payment(transaction_ref: str):
         tx = cur.fetchone()
         if not tx:
             raise HTTPException(status_code=404, detail="transaction not found")
-    return dict(tx)
+        result = dict(tx)
+        if tx["completed_at"] is not None:
+            result["processing_duration_seconds"] = (tx["completed_at"] - tx["created_at"]).total_seconds()
+        else:
+            result["processing_duration_seconds"] = None
+    return result
