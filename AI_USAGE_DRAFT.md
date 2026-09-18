@@ -19,3 +19,13 @@
 
 ## Blockers/limitations to state honestly
 - (fill in as they arise — Rancher attempt status, any test coverage gaps, etc.)
+
+## Step 8 — Python support CLI
+- Chose pg8000 (pure-Python Postgres driver) over psycopg2 for this tool specifically
+  because it needs to run directly on the engineer's host machine, and host Python 3.14
+  has the same psycopg2/pydantic-core build incompatibility hit in Step 4. Containerizing
+  a CLI tool would hurt its usability for an L2 engineer running it ad-hoc.
+- Diagnostic logic (lib/diagnostics.py) deliberately kept pure/side-effect-free (no DB or
+  network calls inside) specifically so it could be unit tested without a live database —
+  a design choice made upfront to satisfy the "automated unit tests for important logic"
+  requirement cleanly, not retrofitted after the fact.
