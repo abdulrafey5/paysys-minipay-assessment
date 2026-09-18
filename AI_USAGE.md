@@ -38,6 +38,15 @@
    during debugging, and it added the `to_regclass` guard so re-runs don't
    throw `relation already exists` errors.
 
+6. "GUI tests failing with empty #custResult, no console errors" — AI had
+   me log actual browser network traffic (page.on("request")/("response"))
+   rather than guess, which showed zero POST requests ever fired after the
+   click. Root cause: `page.click("text=Create Customer")` matched the
+   `<h2>Create Customer</h2>` heading (first DOM match) instead of the
+   `<button>`, since the legacy text-selector API does not enforce
+   uniqueness. Fixed by switching to `get_by_role("button", name=...)`,
+   which targets by accessible role and is unambiguous.
+
 ## How I validated AI output
 - Every API endpoint change was smoke-tested with curl (and later through
   the UI) before being accepted, including status codes, idempotency
@@ -86,8 +95,9 @@
   cause identified (cluster-agent cannot reach rancher-server across
   separate Docker networks via `localhost`); fix documented but not
   executed given SCORING.md's 5-point weight vs. higher-weighted areas.
-- GUI test automation: not completed. Given the 72-hour window and
-  SCORING.md weighting incidents/K8s/SQL (20/15/15) well above GUI
-  automation (10), time was prioritized there. API automation
-  (tests/api/) and manual UI verification (curl + browser smoke test
-  against the customer/payment flow, see SETUP.md) were completed instead.
+- GUI test automation: completed (see tests/ui/, evidence/gui-test-output.txt).
+  Playwright drives the actual static console against the live API: health
+  indicator, customer+payment+lookup happy path, and a duplicate-ref
+  conflict case (3 tests, all passing). Built after API/K8s/SQL work per
+  SCORING.md's weighting (incidents/K8s/SQL at 20/15/15 vs. GUI at 10),
+  once time allowed.

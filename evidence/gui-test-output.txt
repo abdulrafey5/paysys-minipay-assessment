@@ -1,0 +1,13 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0 -- /home/rafey/projects/paysys-minipay-assessment/tests/ui/.venv/bin/python3.12
+cachedir: .pytest_cache
+rootdir: /home/rafey/projects/paysys-minipay-assessment/tests/ui
+configfile: pytest.ini
+plugins: base-url-2.1.0, playwright-0.9.0
+collecting ... collected 3 items
+
+test_console_flow.py::test_health_indicator_shows_healthy[chromium] PASSED [ 33%]
+test_console_flow.py::test_create_customer_and_payment_flow[chromium] PASSED [ 66%]
+test_console_flow.py::test_duplicate_customer_ref_shows_conflict[chromium] PASSED [100%]
+
+============================== 3 passed in 1.24s ===============================
